@@ -1,40 +1,14 @@
 #ifndef __WORKER_H__
 #define __WORKER_H__
 
-#include "group.h"
+#include "decoder.h"
 
 #include <iostream>
 
-
-class RDS_decoder {
-    public:
-    virtual void process(const group & g) = 0;
-
-    inline virtual void rx_error () {}
-
-    inline virtual void sync() {}
-
-    inline virtual void no_sync() {}
-
-    ushort PI_code() const;
-
-    inline virtual bool ready() const { return false; };
-
-    protected:
-
-    /**
-     * @brief Updates PI_code
-     * @return true if PI_code changed, false otherwise
-     */
-    bool update_PI_code(ushort PI_code);
-    private:
-
-    ushort PI;
-};
-
-
 class RDS_worker {
     public:
+    RDS_worker();
+
     void run (std::istream & in,
               RDS_decoder & decoder);
 
@@ -43,6 +17,9 @@ class RDS_worker {
              ushort * group_buf);
 
     int sync (std::istream & in);
+
+    private:
+    uint group_id;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include "decoders/RT.h"
 #include "decoders/BASIC.h"
 #include "decoders/PIN.h"
+#include "constants.h"
 
 #include <iostream>
 #include <cassert>
@@ -19,26 +20,30 @@ class RDS_verbose : public RDS_decoder {
     BASIC_decoder basic;
     PIN_decoder pin;
 
-    virtual void process (const group & g){
-/*        if(g.group_type() != 0x2 &&
-           g.group_type() != 0x1 &&
-           g.group_type() != 0x0)
-            return;
-*/
-        cout << "PI: " << std::bitset<16> (g.PI_code());
-        cout << " | ";
-        cout << "Coverage: " << g.coverage_area_string();
-        cout << " | ";
+    virtual bool accepts(const group & g) const {
+        return true;
+        return g.group_type() == 0x2 ||
+            g.group_type() != 0x1 ||
+            g.group_type() != 0x0;
+    }
 
-        cout << "Gtype: " << std::bitset<4> (g.group_type()) << (int)g.group_type_version();
-        cout << " (" << g.group_type_string() << ")";
-        cout << " | ";
+    virtual void process_impl (const group & g,
+                               bool new_station){
+        cout << "------------------------" << endl;
+        //cout << "PI: " << std::bitset<16> (g.PI_code());
+        //cout << " | ";
+        //cout << "Coverage: " << g.coverage_area_string();
+        //cout << " | ";
 
-        cout << "TP: " << (int)g.TP();
-        cout << " | ";
+        //cout << "Gtype: " << std::bitset<4> (g.group_type()) << (int)g.group_type_version();
+        cout << "(" << g.group_type_string() << ")";
+        //cout << " | ";
 
-        cout << "PTY: " << std::bitset<5> (g.PTY());
-        cout << " (" << g.PTY_string() << ")";
+        //cout << "TP: " << (int)g.TP();
+        //cout << " | ";
+
+        //cout << "PTY: " << std::bitset<5> (g.PTY());
+        //cout << " (" << g.PTY_string() << ")";
         cout << " | ";
 
         cout << std::bitset<5> (g.bits(1, 0, 5));
@@ -57,13 +62,11 @@ class RDS_verbose : public RDS_decoder {
         }
         cout << endl;
         cout << dec;
-        rt.process(g);
-        if(rt.ready())
+        if(rt.process(g) && rt.ready())
             cout << rt.text() << "  || " << rt.size() << ", " << rt.ready() << endl;
 
 
-        basic.process(g);
-        if(basic.ready()) {
+        if(basic.process(g) && basic.ready()) {
             cout << basic.PS_name() << " ||";
             cout << " stereo: " << basic.is_stereo();
             cout << ", artificial_head: " << basic.is_artificial_head();
@@ -77,12 +80,23 @@ class RDS_verbose : public RDS_decoder {
             cout << ")" <<endl;
         }
 
-        pin.process(g);
-        if(pin.ready()) {
-            cout << "PIN (day: " << pin.day();
-            cout << ", " << pin.hour();
-            cout << ", " << pin.minute();
-            cout << ")" << endl;
+        if(pin.process(g)) {
+            cout << "PIN (" << (int) pin.day();
+            cout << ", " << (int) pin.hour();
+            cout << ", " << (int) pin.minute();
+            cout << ") ";
+            cout << ", paging: " << (int) pin.paging();
+            cout << ", extended_country_code: " << (int) pin.extended_country_code();
+            cout << ", TMC_identification: " << (int) pin.TMC_identification();
+            cout << ", paging_id: " << (int) pin.paging_id();
+            cout << ", language_codes: " << (int) pin.language_codes();
+            cout << " (" << language_codes[pin.language_codes()] << ")";
+
+            cout << ", broadcaster_codes: " << (int) pin.broadcaster_codes();
+            cout << ", EWS_channel_id: " << (int) pin.EWS_channel_id();
+            cout << ", linkage_actuator: " << (int) pin.linkage_actuator();
+
+            cout << endl;
 
 
         }

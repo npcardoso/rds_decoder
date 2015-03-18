@@ -2,18 +2,9 @@
 
 #include "block.h"
 
-ushort RDS_decoder::PI_code() const {
-    return PI;
+RDS_worker::RDS_worker() {
+    group_id = 0;
 }
-
-bool RDS_decoder::update_PI_code(ushort PI_code) {
-    bool ret = PI_code != this->PI_code();
-
-    this->PI = PI_code;
-
-    return ret;
-}
-
 
 void RDS_worker::run (std::istream & in,
                       RDS_decoder & decoder) {
@@ -50,7 +41,7 @@ void RDS_worker::run (std::istream & in,
         if(-errors < max_errors)
             errors--;
 
-        decoder.process(group(group_buf));
+        decoder.process(group(group_id++, group_buf));
     }
 }
 

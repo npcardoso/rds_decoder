@@ -80,15 +80,18 @@ const ulong * frequency_list::elements() const {
 
 
 BASIC_decoder::BASIC_decoder() {
-    reset(0);
+    reset();
 }
 
-void BASIC_decoder::process (const group & g){
-    if(g.group_type() != 0x0)
-        return;
+bool BASIC_decoder::accepts(const group & g) const {
+    return g.group_type() == 0x0;
+}
 
-    if(g.PI_code() != PI_code()) { // A new station was tuned in
-        reset(g.PI_code());
+void BASIC_decoder::process_impl (const group & g,
+                                  bool new_station){
+
+    if(new_station) { // A new station was tuned in
+        reset();
     }
 
     uchar selector = g.bits(1, 0, 2);
@@ -195,9 +198,7 @@ bool BASIC_decoder::ready() const {
     return true;
 }
 
-void BASIC_decoder::reset(ushort PI_code) {
-    update_PI_code(PI_code);
-
+void BASIC_decoder::reset() {
     this->tp_bit = false;
     this->ta_bit = false;
     this->ms_bit = false;

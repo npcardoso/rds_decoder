@@ -7,7 +7,10 @@
 
 class group {
     public:
-    group(const ushort * g);
+    group(uint group_id,
+          const ushort * g);
+
+    uint group_id() const;
 
     ushort PI_code() const;
     uchar coverage_area() const;
@@ -27,6 +30,7 @@ class group {
 
     private:
     ushort group_buf[4];
+    uint g_id;
 };
 
 #endif

@@ -10,20 +10,24 @@ class RT_decoder : public RDS_decoder {
     public:
     RT_decoder();
 
-    virtual void process (const group & g);
-
     const char * text() const;
 
     uint size() const;
 
-    virtual bool ready() const;
+    bool ready() const;
 
     private:
 
-    void reset(ushort PI_code,
-               uchar AB_flag,
+    void reset(uchar AB_flag,
                uchar chars_per_group);
 
+
+
+    protected:
+    virtual bool accepts(const group & g) const;
+
+    virtual void process_impl (const group & g,
+                               bool new_station);
 
 
     private:

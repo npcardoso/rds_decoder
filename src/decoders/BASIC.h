@@ -31,8 +31,6 @@ class BASIC_decoder : public RDS_decoder {
     public:
     BASIC_decoder();
 
-    virtual void process (const group & g);
-
     const char * PS_name() const;
 
     bool traffic_announcement () const;
@@ -50,11 +48,16 @@ class BASIC_decoder : public RDS_decoder {
     const ulong * af() const;
 
 
-    virtual bool ready() const;
+    bool ready() const;
+
+    protected:
+    virtual bool accepts(const group & g) const;
+
+    virtual void process_impl (const group & g,
+                               bool new_station);
 
     private:
-
-    void reset(ushort PI_code);
+    void reset();
 
     private:
     char name[9];
@@ -71,8 +74,6 @@ class BASIC_decoder : public RDS_decoder {
     frequency_list freq_list;
     ulong alternative_freqs[25];
     uint alternative_freqs_count;
-
-
 };
 
 #endif

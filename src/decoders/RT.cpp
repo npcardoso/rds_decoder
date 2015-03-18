@@ -3,23 +3,25 @@
 #include <cstring>
 
 RT_decoder::RT_decoder() {
-    reset(0, -1, 0);
+    reset(-1, 0);
 }
 
-void RT_decoder::process (const group & g){
-    if(g.group_type() != 0x2)
-        return;
+bool RT_decoder::accepts(const group & g) const {
+    return g.group_type() == 0x2;
+}
+
+void RT_decoder::process_impl (const group & g,
+                               bool new_station){
 
 
     uchar cur_AB_flag = g.bits(1, 4, 1);
     uint cur_chars_per_group = g.group_type_version()?2:4;
 
-    if(g.PI_code() != PI_code() ||
+    if(new_station ||
        AB_flag != cur_AB_flag ||
        chars_per_group != cur_chars_per_group) { // A new station was tuned in
 
-        reset(g.PI_code(),
-              cur_AB_flag,
+        reset(cur_AB_flag,
               cur_chars_per_group);
     }
 
@@ -73,11 +75,8 @@ bool RT_decoder::ready() const {
     return true;
 }
 
-void RT_decoder::reset(ushort PI_code,
-                       uchar AB_flag,
+void RT_decoder::reset(uchar AB_flag,
                        uchar chars_per_group) {
-    update_PI_code(PI_code);
-
     this->AB_flag = AB_flag;
     this->chars_per_group = chars_per_group;
     this->last_pos = 0;
