@@ -33,7 +33,6 @@ class PIN_decoder : public RDS_decoder {
                                bool new_station);
 
     private:
-
     void reset();
 
     private:

@@ -2,27 +2,7 @@
 #define __BASIC_H__
 
 #include "../worker.h"
-
-class frequency_list {
-    public:
-    frequency_list();
-
-    bool update(uchar af1,
-                uchar af2);
-
-    uint size() const;
-
-    const ulong * elements() const;
-
-    private:
-    void reset(uint target_elems);
-
-    private:
-    bool LFMF;
-    uint target_elems;
-    uint n_elems;
-    ulong elems[25];
-};
+#include "../frequency.h"
 
 /**
  * @note See page 21, section 3.1.5.1 in the standard

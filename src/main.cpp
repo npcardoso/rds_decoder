@@ -1,6 +1,7 @@
 #include "decoders/RT.h"
 #include "decoders/BASIC.h"
 #include "decoders/PIN.h"
+#include "decoders/EON.h"
 #include "constants.h"
 
 #include <iostream>
@@ -19,6 +20,7 @@ class RDS_verbose : public RDS_decoder {
     RT_decoder rt;
     BASIC_decoder basic;
     PIN_decoder pin;
+    EON_decoder eon;
 
     virtual bool accepts(const group & g) const {
         return true;
@@ -35,8 +37,8 @@ class RDS_verbose : public RDS_decoder {
         //cout << "Coverage: " << g.coverage_area_string();
         //cout << " | ";
 
-        //cout << "Gtype: " << std::bitset<4> (g.group_type()) << (int)g.group_type_version();
-        cout << "(" << g.group_type_string() << ")";
+        cout << (int) g.group_type() << (g.group_type_version()?"B":"A");
+        cout << " (" << g.group_type_string() << ")";
         //cout << " | ";
 
         //cout << "TP: " << (int)g.TP();
@@ -99,6 +101,24 @@ class RDS_verbose : public RDS_decoder {
             cout << endl;
 
 
+        }
+
+        if(eon.process(g)) {
+            std::map<ushort, other_network>::const_iterator it = eon.other_networks().begin();
+
+            while(it != eon.other_networks().end()) {
+                const other_network & ON = (it++)->second;
+                cout << ON.PS_name() << " ||";
+                cout << ", TA: " << (int) ON.traffic_announcement();
+                cout << ", TP: " << (int) ON.traffic_program();
+                cout << ", PTY: " << (int) ON.program_type();
+                cout << ", PIN: " << (int) ON.program_item_number();
+
+                cout << ", AFs:";
+                for(int i = 0; i < 12; i++)
+                    cout << " "<< ON.alternative_frequencies()[i];
+                cout << ")" <<endl;
+            }
         }
 
     }
