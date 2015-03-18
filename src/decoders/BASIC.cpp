@@ -117,15 +117,6 @@ void BASIC_decoder::process_impl (const group & g,
         static_PTY = !control_bit;
     }
 
-    // traffic announcement
-    ta_bit = g.bits(1, 4, 1);
-
-    // traffic program
-    tp_bit = g.TP();
-
-   // music/speech
-    ms_bit = g.bits(1, 3, 1);
-
     // alternative frequency
     if(g.group_type_version() == 0){
         uchar af1 = g.bits(2,8, 8);
@@ -149,15 +140,15 @@ const char * BASIC_decoder::PS_name() const{
 }
 
 bool BASIC_decoder::traffic_announcement () const {
-    return ta_bit;
+    return last_group().bits(1, 4, 1);
 }
 
 bool BASIC_decoder::traffic_program () const {
-    return tp_bit;
+    return last_group().TP();
 }
 
 bool BASIC_decoder::is_music() const{
-    return ms_bit;
+    return last_group().bits(1, 3, 1);
 }
 
 bool BASIC_decoder::is_speech() const{

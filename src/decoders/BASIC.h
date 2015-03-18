@@ -62,10 +62,6 @@ class BASIC_decoder : public RDS_decoder {
     private:
     char name[9];
 
-    bool tp_bit;
-    bool ta_bit;
-    bool ms_bit;
-
     bool stereo;
     bool artificial_head;
     bool compressed;
