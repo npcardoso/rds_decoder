@@ -5,8 +5,6 @@
 void PIN_decoder::reset() {
     memset(PIN, 0xFF, 3 * sizeof(uchar));
     memset(slow_labelling, 0, 8 * sizeof(ushort));
-    LA = false;
-    paging_codes = 0;
 }
 
 
@@ -26,33 +24,23 @@ void PIN_decoder::process_impl (const group & g,
         reset();
     }
 
-
-    PIN[0] = g.bits(3, 11, 5); //Day
-    PIN[1] = g.bits(3, 6, 5); //Hour
-    PIN[2] = g.bits(3, 0, 6); //Minute
-
-
     if(g.group_type_version() == 0) {
         uchar variant_code = g.bits(2, 12, 3);
         slow_labelling[variant_code] = g.bits(2, 0, 12);
-
-        LA = g.bits(2, 15, 1);
-
-        paging_codes = g.bits(1, 0, 5);
     }
 }
 
 
 uchar PIN_decoder::day() const {
-    return PIN[0];
+    return last_group().bits(3, 11, 5);
 }
 
 uchar PIN_decoder::hour() const {
-    return PIN[1];
+    return last_group().bits(3, 6, 5);
 }
 
 uchar PIN_decoder::minute() const {
-    return PIN[2];
+    return last_group().bits(3, 0, 6);
 }
 
 ushort PIN_decoder::paging() const{
@@ -84,9 +72,17 @@ ushort PIN_decoder::EWS_channel_id() const {
 }
 
 bool PIN_decoder::linkage_actuator() const {
-    return LA;
+    const group & g = last_group();
+    if(g.group_type_version() == 0)
+        return g.bits(2, 15, 1);
+
+    return 0;
 }
 
 uchar PIN_decoder::radio_paging_codes() const {
-    return paging_codes;
+    const group & g = last_group();
+    if(g.group_type_version() == 0)
+        return g.bits(1, 0, 5);
+
+    return 0;
 }

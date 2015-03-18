@@ -39,8 +39,6 @@ class PIN_decoder : public RDS_decoder {
     private:
     uchar PIN[3];
     ushort slow_labelling[8];
-    bool LA;
-    uchar paging_codes;
 };
 
 #endif

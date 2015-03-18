@@ -152,7 +152,7 @@ bool BASIC_decoder::is_music() const{
 }
 
 bool BASIC_decoder::is_speech() const{
-    return !ms_bit;
+    return !is_music();
 }
 
 bool BASIC_decoder::is_stereo() const{
@@ -190,9 +190,6 @@ bool BASIC_decoder::ready() const {
 }
 
 void BASIC_decoder::reset() {
-    this->tp_bit = false;
-    this->ta_bit = false;
-    this->ms_bit = false;
     this->stereo = false;
     this->artificial_head = false;
     this->compressed = false;
