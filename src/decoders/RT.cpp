@@ -1,5 +1,7 @@
 #include "RT.h"
 
+#include "../constants.h"
+
 #include <cstring>
 
 RT_decoder::RT_decoder() {
@@ -63,6 +65,10 @@ uint RT_decoder::size() const {
     return last_pos;
 }
 
+bool RT_decoder::is_terminated() const {
+    return terminated;
+}
+
 bool RT_decoder::ready() const {
     if(!terminated && size() < chars_per_group * 16)
         return false;
@@ -83,4 +89,12 @@ void RT_decoder::reset(uchar AB_flag,
     this->terminated = false;
 
     memset(txt, 0, 65 * sizeof(char));
+}
+
+std::ostream & RT_decoder::write_to (std::ostream & out) const {
+    out << group_acronyms[2] << ":" << std::endl;
+    out << "\tText ("<< size()<< "): \"" << text() << "\""<< std::endl;
+    out << "\tterminated: "<< (is_terminated()?"true":"false") << std::endl;
+
+    return out;
 }

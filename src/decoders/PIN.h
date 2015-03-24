@@ -26,6 +26,8 @@ class PIN_decoder : public RDS_decoder {
 
     uchar radio_paging_codes() const;
 
+    std::ostream & write_to (std::ostream & out) const;
+
     protected:
     virtual bool accepts(const group & g) const;
 

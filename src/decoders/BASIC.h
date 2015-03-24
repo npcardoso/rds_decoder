@@ -30,6 +30,8 @@ class BASIC_decoder : public RDS_decoder {
 
     bool ready() const;
 
+    std::ostream & write_to (std::ostream & out) const;
+
     protected:
     virtual bool accepts(const group & g) const;
 

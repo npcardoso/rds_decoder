@@ -1,5 +1,7 @@
 #include "PIN.h"
 
+#include "../constants.h"
+
 #include <cstring>
 
 void PIN_decoder::reset() {
@@ -85,4 +87,24 @@ uchar PIN_decoder::radio_paging_codes() const {
         return g.bits(1, 0, 5);
 
     return 0;
+}
+
+std::ostream & PIN_decoder::write_to (std::ostream & out) const {
+    out << group_acronyms[1] << ":" << std::endl;
+
+    out << "\tday: " << (int) day() << std::endl;
+    out << "\thour: " << (int) hour() << std::endl;
+    out << "\tminute: " << (int) minute() << std::endl;
+    out << "\tpaging: " << (int) paging() << std::endl;
+    out << "\textended_country_code: " << (int) extended_country_code() << std::endl;
+    out << "\tTMC_identification: " << (int) TMC_identification() << std::endl;
+    out << "\tpaging_id: " << (int) paging_id() << std::endl;
+    out << "\tlanguage_codes: " << (int) this->language_codes();
+    out << " (" << ::language_codes[this->language_codes()] << ")" << std::endl;
+
+    out << "\tbroadcaster_codes: " << (int) broadcaster_codes() << std::endl;
+    out << "\tEWS_channel_id: " << (int) EWS_channel_id() << std::endl;
+    out << "\tlinkage_actuator: " << (int) linkage_actuator() << std::endl;
+
+    return out;
 }

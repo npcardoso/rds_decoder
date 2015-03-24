@@ -1,5 +1,7 @@
 #include "EON.h"
 
+#include "../constants.h"
+
 #include "../frequency.h"
 
 #include <cstring>
@@ -102,4 +104,24 @@ void EON_decoder::process_impl (const group & g,
 
 const std::map<ushort, other_network> & EON_decoder::other_networks () const {
     return ONs;
+}
+
+std::ostream & EON_decoder::write_to (std::ostream & out) const {
+    std::map<ushort, other_network>::const_iterator it = other_networks().begin();
+    out << group_acronyms[14] << ":" << std::endl;
+
+    while(it != other_networks().end()) {
+        const other_network & ON = (it++)->second;
+        out << "\tPS name: \"" << ON.PS_name() << "\"" << std::endl;
+        out << "\t\tprogram item number: " << (int) ON.program_item_number() << std::endl;
+        out << "\t\tpty: " << (int) ON.program_type() << std::endl;
+        out << "\t\tTA: " << (int) ON.traffic_announcement() << std::endl;
+        out << "\t\tTP: " << (int) ON.traffic_program() << std::endl;
+        out << "\t\tAFs:";
+        for(int i = 0; i < 12; i++)
+            out << " "<< ON.alternative_frequencies()[i];
+        out <<std::endl;
+    }
+
+    return out;
 }

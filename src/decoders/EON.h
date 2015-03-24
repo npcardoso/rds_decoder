@@ -51,6 +51,8 @@ class EON_decoder : public RDS_decoder {
 
     const std::map<ushort, other_network> & other_networks () const;
 
+    std::ostream & write_to (std::ostream & out) const;
+
     protected:
     virtual bool accepts(const group & g) const;
 

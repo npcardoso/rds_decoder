@@ -32,25 +32,9 @@ class RDS_verbose : public RDS_decoder {
     virtual void process_impl (const group & g,
                                bool new_station){
         cout << "------------------------" << endl;
-        //cout << "PI: " << std::bitset<16> (g.PI_code());
-        //cout << " | ";
-        //cout << "Coverage: " << g.coverage_area_string();
-        //cout << " | ";
-
         cout << (int) g.group_type() << (g.group_type_version()?"B":"A");
-        cout << " (" << g.group_type_string() << ")";
-        //cout << " | ";
-
-        //cout << "TP: " << (int)g.TP();
-        //cout << " | ";
-
-        //cout << "PTY: " << std::bitset<5> (g.PTY());
-        //cout << " (" << g.PTY_string() << ")";
-        cout << " | ";
-
-        cout << std::bitset<5> (g.bits(1, 0, 5));
-        cout << " | ";
-
+        cout << " (" << g.group_type_string() << ") | ";
+        cout << std::bitset<5> (g.bits(1, 0, 5)) << " | ";
         for(int i = 2; i < 4; i++) {
             for(int j = 2; j--;) {
               uchar b = g.bits(i, 8 * j, 8);
@@ -64,64 +48,22 @@ class RDS_verbose : public RDS_decoder {
         }
         cout << endl;
         cout << dec;
-        if(rt.process(g) && rt.ready())
-            cout << rt.text() << "  || " << rt.size() << ", " << rt.ready() << endl;
 
-
-        if(basic.process(g) && basic.ready()) {
-            cout << basic.PS_name() << " ||";
-            cout << " stereo: " << basic.is_stereo();
-            cout << ", artificial_head: " << basic.is_artificial_head();
-            cout << ", compressed: " << basic.is_compressed();
-            cout << ", static_pty: " << basic.is_static_PTY();
-            cout << ", TA: " << basic.traffic_announcement();
-            cout << ", TP: " << basic.traffic_program();
-            cout << ", AFs: " << (int)basic.af_count() << " (";
-            for(int i = 0; i < basic.af_count(); i++)
-                cout << " "<< basic.af()[i];
-            cout << ")" <<endl;
+        if(rt.process(g)) {
+            rt.write_to(cout);
         }
-
-        if(pin.process(g)) {
-            cout << "PIN (" << (int) pin.day();
-            cout << ", " << (int) pin.hour();
-            cout << ", " << (int) pin.minute();
-            cout << ") ";
-            cout << ", paging: " << (int) pin.paging();
-            cout << ", extended_country_code: " << (int) pin.extended_country_code();
-            cout << ", TMC_identification: " << (int) pin.TMC_identification();
-            cout << ", paging_id: " << (int) pin.paging_id();
-            cout << ", language_codes: " << (int) pin.language_codes();
-            cout << " (" << language_codes[pin.language_codes()] << ")";
-
-            cout << ", broadcaster_codes: " << (int) pin.broadcaster_codes();
-            cout << ", EWS_channel_id: " << (int) pin.EWS_channel_id();
-            cout << ", linkage_actuator: " << (int) pin.linkage_actuator();
-
-            cout << endl;
-
-
+        else if(basic.process(g)) {
+            basic.write_to(cout);
         }
-
-        if(eon.process(g)) {
-            std::map<ushort, other_network>::const_iterator it = eon.other_networks().begin();
-
-            while(it != eon.other_networks().end()) {
-                const other_network & ON = (it++)->second;
-                cout << ON.PS_name() << " ||";
-                cout << ", TA: " << (int) ON.traffic_announcement();
-                cout << ", TP: " << (int) ON.traffic_program();
-                cout << ", PTY: " << (int) ON.program_type();
-                cout << ", PIN: " << (int) ON.program_item_number();
-
-                cout << ", AFs:";
-                for(int i = 0; i < 12; i++)
-                    cout << " "<< ON.alternative_frequencies()[i];
-                cout << ")" <<endl;
-            }
+        else if(pin.process(g)) {
+            pin.write_to(cout);
+        }
+        else if(eon.process(g)) {
+            eon.write_to(cout);
         }
 
     }
+
 
     virtual void sync() {
         cerr << "synced!" << endl;

@@ -14,13 +14,16 @@ class RT_decoder : public RDS_decoder {
 
     uint size() const;
 
+    bool is_terminated() const;
+
     bool ready() const;
+
+    std::ostream & write_to (std::ostream & out) const;
 
     private:
 
     void reset(uchar AB_flag,
                uchar chars_per_group);
-
 
 
     protected:

@@ -1,5 +1,7 @@
 #include "BASIC.h"
 
+#include "../constants.h"
+
 #include <cstring>
 
 
@@ -122,4 +124,21 @@ void BASIC_decoder::reset() {
     this->alternative_freqs_count = 0;
 
     memset(name, 0, 9 * sizeof(char));
+}
+
+std::ostream & BASIC_decoder::write_to (std::ostream & out) const {
+    out << group_acronyms[0] << ":" << std::endl;
+    out << "\tPS name: \"" << PS_name() << "\"" << std::endl;
+    out << "\tstereo: " << is_stereo() << std::endl;
+    out << "\tartificial_head: " << is_artificial_head() << std::endl;
+    out << "\tcompressed: " << is_compressed() << std::endl;
+    out << "\tstatic_pty: " << is_static_PTY() << std::endl;
+    out << "\tTA: " << traffic_announcement() << std::endl;
+    out << "\tTP: " << traffic_program() << std::endl;
+    out << "\tAFs (" << (int)af_count() << "):";
+    for(int i = 0; i < af_count(); i++)
+        out << " "<< af()[i];
+    out <<std::endl;
+
+    return out;
 }
