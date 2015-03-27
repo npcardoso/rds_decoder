@@ -1,7 +1,7 @@
 #ifndef __BASIC_H__
 #define __BASIC_H__
 
-#include "../worker.h"
+#include "../decoder.h"
 #include "../frequency.h"
 
 /**

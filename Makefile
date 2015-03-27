@@ -8,7 +8,10 @@ OUT=RDS
 CPPFLAGS=--std=c++11
 
 
+
 all: $(OUT)
+
+include .depend
 
 $(OUT): $(OBJS)
 	$(CXX) -o $(OUT) $(OBJS)
@@ -24,5 +27,3 @@ clean:
 
 dist-clean: clean
 	$(RM) *~ .depend
-
-include .depend

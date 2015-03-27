@@ -1,8 +1,12 @@
 #include "decoders/RT.h"
 #include "decoders/BASIC.h"
+#include "decoders/AID.h"
 #include "decoders/PIN.h"
 #include "decoders/EON.h"
 #include "decoders/raw.h"
+
+#include "worker.h"
+
 #include "constants.h"
 
 #include <iostream>
@@ -64,6 +68,7 @@ int main () {
     decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new BASIC_decoder()));
     decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new EON_decoder()));
     decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new PIN_decoder()));
+    decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new AID_decoder()));
 
 
     worker.run(cin, decoder);

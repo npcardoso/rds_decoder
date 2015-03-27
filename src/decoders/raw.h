@@ -1,8 +1,7 @@
 #ifndef __RAW_H__
 #define __RAW_H__
 
-#include "../worker.h"
-#include "../frequency.h"
+#include "../decoder.h"
 
 /**
  * This decoder doesn't perform any operations. It is only used to

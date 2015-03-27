@@ -2,9 +2,9 @@
 An RDS decoder
 
 # Running
-  $ make
-  $ gnuradio-companion grc/rds_rx.grc
-  $ nc -v -lp 12345 127.0.0.1 | ./RDS
+    $ make
+    $ gnuradio-companion grc/rds_rx.grc
+    $ nc -v -lp 12345 127.0.0.1 | ./RDS
 
 # Status
 - Syndrome calculation - done
@@ -13,6 +13,7 @@ An RDS decoder
  - Basic Tuning (0A and 0B) - done
  - Program Item Number (1A and 1B) - done
  - Radio Text (2A and 2B) - done
+ - AID (3A) - done
  - EON (14A and 14B) - done
  - Others - todo
 

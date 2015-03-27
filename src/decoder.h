@@ -1,4 +1,9 @@
+#ifndef __DECODER_H__
+#define __DECODER_H__
+
 #include "group.h"
+
+#include <iostream>
 
 class RDS_decoder {
 public:
@@ -39,3 +44,5 @@ protected:
 private:
     group last_g;
 };
+
+#endif

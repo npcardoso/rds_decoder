@@ -1,7 +1,7 @@
 #ifndef __RT_H__
 #define __RT_H__
 
-#include "../worker.h"
+#include "../decoder.h"
 
 /**
  * @note See page 25, section 3.1.5.3 in the standard
