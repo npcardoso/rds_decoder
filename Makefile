@@ -5,6 +5,8 @@ RM=rm -f
 SRCS=$(shell find . | grep \.cpp$)
 OBJS=$(subst .cpp,.o,$(SRCS))
 OUT=RDS
+CPPFLAGS=--std=c++11
+
 
 all: $(OUT)
 

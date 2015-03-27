@@ -2,87 +2,70 @@
 #include "decoders/BASIC.h"
 #include "decoders/PIN.h"
 #include "decoders/EON.h"
+#include "decoders/raw.h"
 #include "constants.h"
 
 #include <iostream>
 #include <cassert>
-#include <bitset>
+#include <list>
 
-#include <cstring>
+#include <memory>
 
 using namespace std;
 
 
+class verbose_decoder : public RDS_decoder {
+public:
 
+    list<std::shared_ptr<RDS_decoder> > decoders;
 
-class RDS_verbose : public RDS_decoder {
-    public:
-    RT_decoder rt;
-    BASIC_decoder basic;
-    PIN_decoder pin;
-    EON_decoder eon;
+protected:
 
-    virtual bool accepts(const group & g) const {
+    virtual bool accepts (const group & g) const {
         return true;
-        return g.group_type() == 0x2 ||
-            g.group_type() != 0x1 ||
-            g.group_type() != 0x0;
     }
 
     virtual void process_impl (const group & g,
-                               bool new_station){
-        cout << "------------------------" << endl;
-        cout << (int) g.group_type() << (g.group_type_version()?"B":"A");
-        cout << " (" << g.group_type_string() << ") | ";
-        cout << std::bitset<5> (g.bits(1, 0, 5)) << " | ";
-        for(int i = 2; i < 4; i++) {
-            for(int j = 2; j--;) {
-              uchar b = g.bits(i, 8 * j, 8);
-              cout << std::bitset<8>(b) << "(";
-              cout.fill('0');
-              cout.width(2);
-              cout << hex<< (int)b << ")";
-              cout << "(" << (char)(isprint(b)?b:'*') << ")";
-          }
-          cout << " | ";
-        }
-        cout << endl;
-        cout << dec;
+                               bool new_station) {
+        cout << "------------------------------------------------------------------------" << endl;
 
-        if(rt.process(g)) {
-            rt.write_to(cout);
+        for (auto & dec : decoders) {
+            if (dec->process(g))
+                dec->write_to(cout);
         }
-        else if(basic.process(g)) {
-            basic.write_to(cout);
-        }
-        else if(pin.process(g)) {
-            pin.write_to(cout);
-        }
-        else if(eon.process(g)) {
-            eon.write_to(cout);
-        }
-
     }
 
-
-    virtual void sync() {
+    virtual void sync () {
         cerr << "synced!" << endl;
     }
 
-    virtual void no_sync() {
+    virtual void no_sync () {
         cerr << "lost sync!" << endl;
     }
 
-    virtual void rx_error() {
+    virtual void rx_error () {
         cerr << "rx_error!" << endl;
     }
-
-
 };
 
-int main(){
+
+int main () {
     RDS_worker worker;
-    RDS_verbose decoder;
+    verbose_decoder decoder;
+
+
+    for (int i = 0; i < 16; i++) {
+        decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new raw_decoder(i, 0)));
+        decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new raw_decoder(i, 1)));
+    }
+
+    decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new RT_decoder(0)));
+    decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new RT_decoder(1)));
+    decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new BASIC_decoder()));
+    decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new EON_decoder()));
+    decoder.decoders.push_back(std::shared_ptr<RDS_decoder> (new PIN_decoder()));
+
+
     worker.run(cin, decoder);
 
     return 0;

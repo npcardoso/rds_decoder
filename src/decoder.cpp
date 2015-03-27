@@ -3,24 +3,26 @@
 
 #include "decoder.h"
 
-ushort g_init[4] = {0x0,0x0,0x0,0x0};
+ushort g_init[4] = {
+    0x0, 0x0, 0x0, 0x0
+};
 
-RDS_decoder::RDS_decoder() : last_g(0, g_init) {}
+RDS_decoder::RDS_decoder () : last_g(0, g_init) {}
 
-bool RDS_decoder::process(const group & g) {
-    if(!accepts(g))
+bool RDS_decoder::process (const group & g) {
+    if (!accepts(g))
         return false;
 
     bool new_station = g.PI_code() != last_g.PI_code();
 
-    this->last_g = g;
-
     process_impl(g, new_station);
+
+    this->last_g = g;
 
     return true;
 }
 
-const group & RDS_decoder::last_group() const {
+const group & RDS_decoder::last_group () const {
     return last_g;
 }
 
