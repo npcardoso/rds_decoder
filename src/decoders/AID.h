@@ -4,7 +4,7 @@
 #include "../decoder.h"
 
 /**
- * @note See page 21, section 3.1.5.1 in the standard
+ * @note See page 27, section 3.1.5.4 in the standard
  */
 class AID_decoder : public RDS_decoder {
 public:

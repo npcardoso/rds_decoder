@@ -2,6 +2,11 @@
 
 #include "../constants.h"
 
+bool AID_decoder::accepts (const group & g) const {
+    return g.group_type() == 0x3 &&
+           g.group_type_version() == 0;
+}
+
 uchar AID_decoder::application_group_type_code () const {
     return last_group().bits(1, 0, 5);
 }
@@ -12,11 +17,6 @@ uint AID_decoder::message_bits () const {
 
 uint AID_decoder::application_id () const {
     return last_group().bits(3);
-}
-
-bool AID_decoder::accepts (const group & g) const {
-    return g.group_type() == 0x3 &&
-           g.group_type_version() == 0;
 }
 
 std::ostream & AID_decoder::write_to (std::ostream & out) const {

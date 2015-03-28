@@ -14,6 +14,7 @@ An RDS decoder
  - Program Item Number (1A and 1B) - done
  - Radio Text (2A and 2B) - done
  - AID (3A) - done
+ - CT (4A) - done
  - EON (14A and 14B) - done
  - Others - todo
 
